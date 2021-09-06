@@ -14,3 +14,14 @@ func TestYouGet_Info(t *testing.T) {
 	}
 	t.Log(res)
 }
+
+func TestYouGet_Download(t *testing.T) {
+	y := NewYouGet()
+	url := "https://www.bilibili.com/video/BV1iy4y1G7b8"
+
+	res, err := y.Download(url, "dash-flv360", "./video")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(res)
+}

@@ -1,0 +1,23 @@
+version: '2.0'
+
+services:
+  youget:
+    image: "youget:5"
+    volumes:
+      - "/Users/zhengjm/volumes/workspace:/workspace"
+    ports:
+      - "8081:8081"
+  mysql:
+    network_mode: "bridge"
+    image: "mysql:latest"
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_USER: 'test'
+      MYSQL_PASS: '123456'
+    restart: always
+    volumes:
+      - "/Users/zhengjm/volumes/db:/var/lib/mysql"
+      - "/Users/zhengjm/volumes/conf/my.cnf:/etc/my.cnf"
+      - "/Users/zhengjm/volumes/init:/docker-entrypoint-initdb.d/"
+    ports:
+      - "3306:3306"

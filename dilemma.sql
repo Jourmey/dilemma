@@ -4,8 +4,10 @@ create table task
         primary key,
     url         varchar(255) default ''                not null comment '链接',
     signatures  varchar(32)  default ''                not null comment '特征码',
-    tag         int          default 0                 not null,
+    tag         int          default 0                 not null comment '标签',
     status      int          default 0                 not null comment '任务状态 0未处理 1获取信息',
+    title       varchar(255) default ''                not null comment '标题',
+    site        varchar(32)  default ''                not null comment '平台',
     create_time timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time timestamp    default CURRENT_TIMESTAMP not null comment '修改时间',
 ) comment '任务表';

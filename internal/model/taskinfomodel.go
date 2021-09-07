@@ -22,9 +22,10 @@ var (
 type (
 	TaskInfoModel interface {
 		Insert(data TaskInfo) (sql.Result, error)
-		FindOne(id int64) (*TaskInfo, error)
+		FindOne(id int) (*TaskInfo, error)
 		Update(data TaskInfo) error
-		Delete(id int64) error
+		Delete(id int) error
+		Finds(limit, offset int) ([]*TaskInfo, error)
 	}
 
 	defaultTaskInfoModel struct {
@@ -33,12 +34,12 @@ type (
 	}
 
 	TaskInfo struct {
-		Id         int64     `db:"id"`          // id
-		TaskId     int64     `db:"task_id"`     // 关联任务
+		Id         int       `db:"id"`          // id
+		TaskId     int       `db:"task_id"`     // 关联任务
 		Format     string    `db:"format"`      // 链接:dash-flv360
 		Container  string    `db:"container"`   // 类型:mp4
 		Quality    string    `db:"quality"`     // 质量:流畅 360P
-		Size       int64     `db:"size"`        // 任务大小
+		Size       int       `db:"size"`        // 任务大小
 		CreateTime time.Time `db:"create_time"` // 创建时间
 		UpdateTime time.Time `db:"update_time"` // 修改时间
 	}
@@ -57,7 +58,7 @@ func (m *defaultTaskInfoModel) Insert(data TaskInfo) (sql.Result, error) {
 	return ret, err
 }
 
-func (m *defaultTaskInfoModel) FindOne(id int64) (*TaskInfo, error) {
+func (m *defaultTaskInfoModel) FindOne(id int) (*TaskInfo, error) {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", taskInfoRows, m.table)
 	var resp TaskInfo
 	err := m.conn.QueryRow(&resp, query, id)
@@ -77,8 +78,23 @@ func (m *defaultTaskInfoModel) Update(data TaskInfo) error {
 	return err
 }
 
-func (m *defaultTaskInfoModel) Delete(id int64) error {
+func (m *defaultTaskInfoModel) Delete(id int) error {
 	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 	_, err := m.conn.Exec(query, id)
 	return err
+}
+
+func (m *defaultTaskInfoModel) finds(other string) ([]*TaskInfo, error) {
+	query := fmt.Sprintf("select %s from %s %s", taskRows, m.table, other)
+	var resp []*TaskInfo
+	err := m.conn.QueryRows(&resp, query)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (m *defaultTaskInfoModel) Finds(limit, offset int) ([]*TaskInfo, error) {
+	o := fmt.Sprintf("limit %d offset %d", limit, offset)
+	return m.finds(o)
 }

@@ -20,14 +20,6 @@ func taskinfoHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 
 		l := logic.NewTaskinfoLogic(r.Context(), ctx)
 		resp, err := l.Taskinfo(req)
-		var res types.ResultMsg
-		if err != nil {
-			res.Code = 1
-			res.Msg = err.Error()
-		} else {
-			res.Result = resp
-			res.Msg = "success"
-		}
-		httpx.OkJson(w, resp)
+		httpx.OkJson(w, types.NewResultMsg(resp, err))
 	}
 }

@@ -22,9 +22,10 @@ var (
 type (
 	VideoModel interface {
 		Insert(data Video) (sql.Result, error)
-		FindOne(id int64) (*Video, error)
+		FindOne(id int) (*Video, error)
 		Update(data Video) error
-		Delete(id int64) error
+		Delete(id int) error
+		Finds(limit, offset int) ([]*Video, error)
 	}
 
 	defaultVideoModel struct {
@@ -33,8 +34,8 @@ type (
 	}
 
 	Video struct {
-		Id         int64     `db:"id"`           // id
-		TaskInfoId int64     `db:"task_info_id"` // 关联任务信息
+		Id         int       `db:"id"`           // id
+		TaskInfoId int       `db:"task_info_id"` // 关联任务信息
 		Path       string    `db:"path"`         // 路径
 		CreateTime time.Time `db:"create_time"`  // 创建时间
 		UpdateTime time.Time `db:"update_time"`  // 修改时间
@@ -54,7 +55,7 @@ func (m *defaultVideoModel) Insert(data Video) (sql.Result, error) {
 	return ret, err
 }
 
-func (m *defaultVideoModel) FindOne(id int64) (*Video, error) {
+func (m *defaultVideoModel) FindOne(id int) (*Video, error) {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", videoRows, m.table)
 	var resp Video
 	err := m.conn.QueryRow(&resp, query, id)
@@ -74,8 +75,23 @@ func (m *defaultVideoModel) Update(data Video) error {
 	return err
 }
 
-func (m *defaultVideoModel) Delete(id int64) error {
+func (m *defaultVideoModel) Delete(id int) error {
 	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 	_, err := m.conn.Exec(query, id)
 	return err
+}
+
+func (m *defaultVideoModel) finds(other string) ([]*Video, error) {
+	query := fmt.Sprintf("select %s from %s %s", taskRows, m.table, other)
+	var resp []*Video
+	err := m.conn.QueryRows(&resp, query)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (m *defaultVideoModel) Finds(limit, offset int) ([]*Video, error) {
+	o := fmt.Sprintf("limit %d offset %d", limit, offset)
+	return m.finds(o)
 }

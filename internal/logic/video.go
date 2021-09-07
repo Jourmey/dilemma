@@ -1,0 +1,68 @@
+package logic
+
+import (
+	"context"
+	"dilemma/internal/model"
+	"dilemma/youget"
+
+	"dilemma/internal/svc"
+	"dilemma/internal/types"
+
+	"github.com/tal-tech/go-zero/core/logx"
+)
+
+type VideoLogic struct {
+	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+
+	taskDB     model.TaskModel
+	taskInfoDB model.TaskInfoModel
+	videoDB    model.VideoModel
+}
+
+func NewVideoLogic(ctx context.Context, svcCtx *svc.ServiceContext) VideoLogic {
+	c := model.GetSqlConn(svcCtx.Config.Mysql)
+	return VideoLogic{
+		Logger:     logx.WithContext(ctx),
+		ctx:        ctx,
+		svcCtx:     svcCtx,
+		taskDB:     model.NewTaskModel(c),
+		taskInfoDB: model.NewTaskInfoModel(c),
+		videoDB:    model.NewVideoModel(c),
+	}
+}
+
+func (l *VideoLogic) Video(req types.GetReq) ([]*model.Video, error) {
+	// 按照id查询
+	if req.Id != 0 {
+		t, err := l.videoDB.FindOne(req.Id)
+		if err != nil {
+			return nil, err
+		} else {
+			return []*model.Video{t}, nil
+		}
+	}
+
+	// 分页查询
+	if req.PageSize <= 0 {
+		req.PageSize = 20
+	}
+	return l.videoDB.Finds(req.PageSize, req.PageNo)
+}
+
+func (l *VideoLogic) VideoDownload(req types.VideoDownloadReq) error {
+	info, err := l.taskInfoDB.FindOne(req.TaskInfoId)
+	if err != nil {
+		return err
+	}
+
+	task, err := l.taskDB.FindOne(info.TaskId)
+	if err != nil {
+		return err
+	}
+
+	y := youget.NewYouGet()
+	_, err = y.Download(task.Url, info.Format, "/workspace")
+	return err
+}

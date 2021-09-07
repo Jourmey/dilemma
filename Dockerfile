@@ -1,6 +1,9 @@
-FROM python:alpine
- 
-RUN mkdir /app /workspace
-ADD . /app/
-# 安装you-get
-RUN cd /app/you-get/ && ./setup.py install
+FROM youget:5
+
+COPY . /app/dilemma/
+# 设置工作目录
+WORKDIR /app/dilemma/
+# 端口
+EXPOSE 8081
+# 设置启动命令
+CMD ["./dilemma","-f=etc/dilemma.json"]

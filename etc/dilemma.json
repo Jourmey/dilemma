@@ -1,0 +1,12 @@
+{
+  "Name": "dilemma",
+  "Host": "0.0.0.0",
+  "Port": 8081,
+  "Mysql": {
+    "Host": "mysql",
+    "Port": 3306,
+    "DbName": "dilemma",
+    "User": "root",
+    "Password": "123456"
+  }
+}

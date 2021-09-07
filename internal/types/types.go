@@ -7,17 +7,31 @@ type ResultMsg struct {
 	Msg    string      `json:"msg"`
 }
 
+func NewResultMsg(result interface{}, err error) *ResultMsg {
+	r := new(ResultMsg)
+	if err != nil {
+		r.Code = 1
+		r.Result = nil
+		r.Msg = err.Error()
+	} else {
+		r.Code = 0
+		r.Result = result
+		r.Msg = "success"
+	}
+	return r
+}
+
 type GetReq struct {
-	Id       int `form:"id"`
-	PageNo   int `form:"page_no"`
-	PageSize int `form:"page_size"`
+	Id       int `form:"id,optional"`
+	PageNo   int `form:"page_no,optional"`
+	PageSize int `form:"page_size,optional"`
 }
 
 type TaskCreatReq struct {
 	Url string `json:"url"`
-	Tag string `json:"tag"`
+	Tag int    `json:"tag"`
 }
 
 type VideoDownloadReq struct {
-	TaskInfoId string `json:"task_info_id"`
+	TaskInfoId int `json:"task_info_id"`
 }

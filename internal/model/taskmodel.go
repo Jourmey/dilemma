@@ -26,6 +26,7 @@ type (
 		Update(data Task) error
 		Delete(id int) error
 		Finds(limit, offset int) ([]*Task, error)
+		UpdateStatus(id int, Status int, Title, Site string) (sql.Result, error)
 	}
 
 	defaultTaskModel struct {
@@ -98,4 +99,9 @@ func (m *defaultTaskModel) finds(other string) ([]*Task, error) {
 func (m *defaultTaskModel) Finds(limit, offset int) ([]*Task, error) {
 	o := fmt.Sprintf("limit %d offset %d", limit, offset)
 	return m.finds(o)
+}
+
+func (m *defaultTaskModel) UpdateStatus(id int, Status int, Title, Site string) (sql.Result, error) {
+	query := fmt.Sprintf("update %s set `status`=?, `title`=?, `site`=?, where `id` = ?", m.table)
+	return m.conn.Exec(query, Status, Title, Site, id)
 }

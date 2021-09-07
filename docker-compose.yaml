@@ -1,14 +1,8 @@
 version: '2.0'
 
 services:
-  youget:
-    image: "youget:5"
-    volumes:
-      - "/Users/zhengjm/volumes/workspace:/workspace"
-    ports:
-      - "8081:8081"
   mysql:
-    network_mode: "bridge"
+    container_name: mysql
     image: "mysql:latest"
     environment:
       MYSQL_ROOT_PASSWORD: "123456"
@@ -21,3 +15,22 @@ services:
       - "/Users/zhengjm/volumes/init:/docker-entrypoint-initdb.d/"
     ports:
       - "3306:3306"
+    networks:
+      - mynet
+  dilemma:
+    container_name: dilemma
+    image: "dilemma:v1"
+    volumes:
+      - "/Users/zhengjm/volumes/workspace:/workspace"
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    networks:
+      - mynet
+
+networks: 
+  mynet: 
+      driver: bridge    

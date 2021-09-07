@@ -21,15 +21,7 @@ func taskHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 		l := logic.NewTaskLogic(r.Context(), ctx)
 		resp, err := l.Task(req)
 
-		var res types.ResultMsg
-		if err != nil {
-			res.Code = 1
-			res.Msg = err.Error()
-		} else {
-			res.Result = resp
-			res.Msg = "success"
-		}
-		httpx.OkJson(w, resp)
+		httpx.OkJson(w, types.NewResultMsg(resp, err))
 	}
 }
 
@@ -44,14 +36,6 @@ func taskCreatHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 		l := logic.NewTaskLogic(r.Context(), ctx)
 		err := l.Create(req)
 
-		var res types.ResultMsg
-		if err != nil {
-			res.Code = 1
-			res.Msg = err.Error()
-		} else {
-			res.Result = nil
-			res.Msg = "success"
-		}
-		httpx.OkJson(w, res)
+		httpx.OkJson(w, types.NewResultMsg(nil, err))
 	}
 }

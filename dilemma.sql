@@ -13,7 +13,7 @@ create table task
 ) comment '任务表';
 
 create
-index task__status
+index task_status_index
     on task (status);
 
 create
@@ -34,6 +34,9 @@ create table task_info
     update_time timestamp   default CURRENT_TIMESTAMP not null comment '修改时间',
 ) comment '任务信息表';
 
+create
+index task_info_task_id_index
+    on task_info (task_id);
 
 create table video
 (
@@ -44,3 +47,7 @@ create table video
     create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time  timestamp    default CURRENT_TIMESTAMP not null comment '修改时间',
 ) comment '视频下载表';
+
+create
+index video_task_info_id_index
+    on video (task_info_id);

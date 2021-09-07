@@ -1,0 +1,48 @@
+type (
+	ResultMsg {
+		Code   int         `json:"code"`
+		Result interface{} `json:"result"`
+		Msg    string      `json:"msg"`
+	}
+
+	GetReq {
+		Id       int `form:"id"`
+		PageNo   int `form:"page_no"`
+		PageSize int `form:"page_size"`
+	}
+
+	TaskCreatReq {
+		Url string `json:"url"`
+		Tag string `json:"tag"`
+	}
+
+	VideoDownloadReq {
+		TaskInfoId string `json:"task_info_id"`
+	}
+)
+
+service open-api {
+	@server(
+		handler: taskHandler
+	)
+	get /task(GetReq) returns(ResultMsg)
+	@server(
+		handler: task2Handler
+	)
+	post /task/creat(TaskCreatReq) returns(ResultMsg)
+	
+	@server(
+		handler: taskinfoHandler
+	)
+	get /taskinfo(GetReq) returns(ResultMsg)
+	
+	@server(
+		handler: videoHandler
+		
+	)
+	get /video(GetReq) returns(ResultMsg)
+	@server(
+		handler: video2Handler
+	)
+	post /video/download(VideoDownloadReq) returns(ResultMsg)
+}

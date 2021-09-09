@@ -22,14 +22,13 @@ type VideoLogic struct {
 }
 
 func NewVideoLogic(ctx context.Context, svcCtx *svc.ServiceContext) VideoLogic {
-	c := model.GetSqlConn(svcCtx.Config.Mysql)
 	return VideoLogic{
 		Logger:     logx.WithContext(ctx),
 		ctx:        ctx,
 		svcCtx:     svcCtx,
-		taskDB:     model.NewTaskModel(c),
-		taskInfoDB: model.NewTaskInfoModel(c),
-		videoDB:    model.NewVideoModel(c),
+		taskDB:     model.NewTaskModel(svcCtx.DB),
+		taskInfoDB: model.NewTaskInfoModel(svcCtx.DB),
+		videoDB:    model.NewVideoModel(svcCtx.DB),
 	}
 }
 

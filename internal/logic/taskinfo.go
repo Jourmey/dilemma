@@ -22,7 +22,7 @@ func NewTaskinfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) TaskinfoL
 		Logger:     logx.WithContext(ctx),
 		ctx:        ctx,
 		svcCtx:     svcCtx,
-		taskInfoDB: model.NewTaskInfoModel(model.GetSqlConn(svcCtx.Config.Mysql)),
+		taskInfoDB: model.NewTaskInfoModel(svcCtx.DB),
 	}
 }
 

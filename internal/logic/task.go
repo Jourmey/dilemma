@@ -18,17 +18,17 @@ type TaskLogic struct {
 }
 
 func NewTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) TaskLogic {
-	c := model.GetSqlConn(svcCtx.Config.Mysql)
 	return TaskLogic{
 		Logger:     logx.WithContext(ctx),
 		ctx:        ctx,
 		svcCtx:     svcCtx,
-		taskInfoDB: model.NewTaskInfoModel(c),
-		taskDB:     model.NewTaskModel(c),
+		taskInfoDB: model.NewTaskInfoModel(svcCtx.DB),
+		taskDB:     model.NewTaskModel(svcCtx.DB),
 	}
 }
 
 func (l *TaskLogic) Task(req types.GetReq) ([]*model.Task, error) {
+	l.Logger.Info("获取任务信息,请求参数为:", req, "开始处理")
 	// 按照id查询
 	if req.Id != 0 {
 		t, err := l.taskDB.FindOne(req.Id)
@@ -38,7 +38,6 @@ func (l *TaskLogic) Task(req types.GetReq) ([]*model.Task, error) {
 			return []*model.Task{t}, nil
 		}
 	}
-
 	// 分页查询
 	if req.PageSize <= 0 {
 		req.PageSize = 20
@@ -52,11 +51,7 @@ func (l *TaskLogic) Create(req types.TaskCreatReq) error {
 		Url: req.Url,
 		Tag: req.Tag,
 	}
-	taskResult, err := l.taskDB.Insert(data)
-	if err != nil {
-		return err
-	}
-	id, err := taskResult.LastInsertId()
+	id, err := l.taskDB.Insert(data)
 	if err != nil {
 		return err
 	}
@@ -69,7 +64,7 @@ func (l *TaskLogic) Create(req types.TaskCreatReq) error {
 	}
 
 	// 3.更新信息
-	_, err = l.taskDB.UpdateStatus(int(id), 1, yInfo.Title, yInfo.Site)
+	err = l.taskDB.UpdateStatus(id, 1, yInfo.Title, yInfo.Site)
 	if err != nil {
 		return err
 	}

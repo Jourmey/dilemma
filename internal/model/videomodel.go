@@ -2,11 +2,12 @@ package model
 
 import (
 	"gorm.io/gorm"
+	"time"
 )
 
 type (
 	VideoModel interface {
-		Insert(data Video) (int, error)
+		Insert(data *Video) (int, error)
 		FindOne(id int) (*Video, error)
 		Delete(id int) error
 		Finds(limit, offset int) ([]*Video, error)
@@ -18,9 +19,11 @@ type (
 	}
 
 	Video struct {
-		gorm.Model
-		TaskInfoId int    `db:"task_info_id"` // 关联任务信息
-		Path       string `db:"path"`         // 路径
+		Id         int       `db:"id"`           // id
+		TaskInfoId int       `db:"task_info_id"` // 关联任务信息
+		Path       string    `db:"path"`         // 路径
+		CreateTime time.Time `db:"create_time"`  // 创建时间
+		UpdateTime time.Time `db:"update_time"`  // 修改时间
 	}
 )
 
@@ -46,9 +49,9 @@ func (m *defaultVideoModel) finds(where GormFunc) ([]*Video, error) {
 	return v, err
 }
 
-func (m *defaultVideoModel) Insert(data Video) (int, error) {
-	err := m.db.Omit("create_time", "update_time").Create(&data).Error
-	return int(data.ID), err
+func (m *defaultVideoModel) Insert(data *Video) (int, error) {
+	err := m.db.Omit("create_time", "update_time").Create(data).Error
+	return data.Id, err
 }
 
 func (m *defaultVideoModel) FindOne(id int) (*Video, error) {

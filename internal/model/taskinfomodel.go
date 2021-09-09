@@ -2,11 +2,12 @@ package model
 
 import (
 	"gorm.io/gorm"
+	"time"
 )
 
 type (
 	TaskInfoModel interface {
-		Insert(data TaskInfo) (int, error)
+		Insert(data *TaskInfo) (int, error)
 		FindOne(id int) (*TaskInfo, error)
 		Delete(id int) error
 		Finds(limit, offset int) ([]*TaskInfo, error)
@@ -18,12 +19,14 @@ type (
 	}
 
 	TaskInfo struct {
-		gorm.Model
-		TaskId    int    `db:"task_id"`   // 关联任务
-		Format    string `db:"format"`    // 链接:dash-flv360
-		Container string `db:"container"` // 类型:mp4
-		Quality   string `db:"quality"`   // 质量:流畅 360P
-		Size      int    `db:"size"`      // 任务大小
+		Id         int       `db:"id"`          // id
+		TaskId     int       `db:"task_id"`     // 关联任务
+		Format     string    `db:"format"`      // 链接:dash-flv360
+		Container  string    `db:"container"`   // 类型:mp4
+		Quality    string    `db:"quality"`     // 质量:流畅 360P
+		Size       int       `db:"size"`        // 任务大小
+		CreateTime time.Time `db:"create_time"` // 创建时间
+		UpdateTime time.Time `db:"update_time"` // 修改时间
 	}
 )
 
@@ -50,9 +53,9 @@ func (d *defaultTaskInfoModel) finds(where GormFunc) ([]*TaskInfo, error) {
 	return v, err
 }
 
-func (d *defaultTaskInfoModel) Insert(data TaskInfo) (int, error) {
-	err := d.db.Omit("create_time", "update_time").Create(&data).Error
-	return int(data.ID), err
+func (d *defaultTaskInfoModel) Insert(data *TaskInfo) (int, error) {
+	err := d.db.Omit("create_time", "update_time").Create(data).Error
+	return data.Id, err
 }
 
 func (d *defaultTaskInfoModel) FindOne(id int) (*TaskInfo, error) {

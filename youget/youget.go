@@ -39,7 +39,7 @@ func NewYouGet() *YouGet {
 
 func (f *YouGet) Info(url string) (*Info, error) {
 	i := new(Info)
-	err := f.cmd2(i, "-i", url, "--json")
+	err := f.cmd2(i, url, "--json")
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (f *YouGet) Info(url string) (*Info, error) {
 func (f *YouGet) Download(url string, format string, outputDir string) (string, error) {
 	data, err := f.cmd("--format="+format, "--output-dir="+outputDir, url)
 	if err != nil {
-		return "", err
+		return string(data), err
 	}
 	return string(data), nil
 }

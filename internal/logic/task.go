@@ -45,44 +45,65 @@ func (l *TaskLogic) Task(req types.GetReq) ([]*model.Task, error) {
 	return l.taskDB.Finds(req.PageSize, req.PageNo)
 }
 
+// 插入任务
 func (l *TaskLogic) Create(req types.TaskCreatReq) error {
-	// 1.插入任务
 	data := model.Task{
 		Url: req.Url,
 		Tag: req.Tag,
 	}
-	id, err := l.taskDB.Insert(data)
+	id, err := l.taskDB.Insert(&data)
 	if err != nil {
+		l.Logger.Error("创建任务失败", err)
 		return err
 	}
+	l.Logger.Info("创建任务", "任务id:", id)
 
-	// 2.获取任务信息
+	go func() {
+		err = l.YouGetInfo(data)
+		if err != nil {
+			l.Logger.Error("处理任务失败", err)
+		}
+	}()
+	return nil
+}
+
+// 获取任务信息
+func (l *TaskLogic) YouGetInfo(task model.Task) error {
 	y := youget.NewYouGet()
-	yInfo, err := y.Info(req.Url)
+	yInfo, err := y.Info(task.Url)
 	if err != nil {
+		// 更新信息
+		err = l.taskDB.UpdateStatus(task.Id, 2, "", "")
+		if err != nil {
+			l.Logger.Error("更新任务数据失败", err)
+			return err
+		}
+		l.Logger.Error("创建任务失败", err)
 		return err
 	}
 
-	// 3.更新信息
-	err = l.taskDB.UpdateStatus(id, 1, yInfo.Title, yInfo.Site)
+	// 更新信息
+	err = l.taskDB.UpdateStatus(task.Id, 1, yInfo.Title, yInfo.Site)
 	if err != nil {
+		l.Logger.Error("更新任务数据失败", err)
 		return err
 	}
 
-	// 4.插入info信息
+	// 插入info信息
 	for format, stream := range yInfo.Streams {
 		taskInfo := model.TaskInfo{
-			TaskId:    int(id),
+			TaskId:    task.Id,
 			Format:    format,
 			Container: stream.Container,
 			Quality:   stream.Quality,
 			Size:      stream.Size,
 		}
-		_, err = l.taskInfoDB.Insert(taskInfo)
+		_, err = l.taskInfoDB.Insert(&taskInfo)
 		if err != nil {
+			l.Logger.Info("更新任务信息数据失败", err)
 			continue
 		}
 	}
 
-	return err
+	return nil
 }

@@ -2,11 +2,12 @@ package model
 
 import (
 	"gorm.io/gorm"
+	"time"
 )
 
 type (
 	TaskModel interface {
-		Insert(data Task) (int, error)
+		Insert(data *Task) (int, error)
 		FindOne(id int) (*Task, error)
 		Delete(id int) error
 		Finds(limit, offset int) ([]*Task, error)
@@ -19,13 +20,15 @@ type (
 	}
 
 	Task struct {
-		gorm.Model
-		Url        string `db:"url"`        // 链接
-		Signatures string `db:"signatures"` // 特征码
-		Tag        int    `db:"tag"`        // 标签
-		Status     int    `db:"status"`     // 任务状态 0未处理 1获取信息
-		Title      string `db:"title"`      // 标题
-		Site       string `db:"site"`       // 平台
+		Id         int       `db:"id"`          // id
+		Url        string    `db:"url"`         // 链接
+		Signatures string    `db:"signatures"`  // 特征码
+		Tag        int       `db:"tag"`         // 标签
+		Status     int       `db:"status"`      // 任务状态 0未处理 1获取信息 2获取失败
+		Title      string    `db:"title"`       // 标题
+		Site       string    `db:"site"`        // 平台
+		CreateTime time.Time `db:"create_time"` // 创建时间
+		UpdateTime time.Time `db:"update_time"` // 修改时间
 	}
 )
 
@@ -52,9 +55,9 @@ func (m *defaultTaskModel) finds(where GormFunc) ([]*Task, error) {
 	return v, err
 }
 
-func (m *defaultTaskModel) Insert(data Task) (int, error) {
-	err := m.db.Omit("create_time", "update_time").Create(&data).Error
-	return int(data.ID), err
+func (m *defaultTaskModel) Insert(data *Task) (int, error) {
+	err := m.db.Omit("create_time", "update_time").Create(data).Error
+	return data.Id, err
 }
 
 func (m *defaultTaskModel) FindOne(id int) (*Task, error) {
@@ -74,7 +77,7 @@ func (m *defaultTaskModel) Finds(limit, offset int) ([]*Task, error) {
 }
 
 func (m *defaultTaskModel) UpdateStatus(id int, Status int, Title, Site string) error {
-	return m.db.Where("id = ?", id).Updates(map[string]interface{}{
+	return m.db.Model(&Task{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"status": Status,
 		"title":  Title,
 		"site":   Site,

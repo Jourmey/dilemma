@@ -19,7 +19,7 @@ services:
       - mynet
   dilemma:
     container_name: dilemma
-    image: "dilemma:v1"
+    image: "dilemma:v2"
     volumes:
       - "/Users/zhengjm/volumes/workspace:/workspace"
     ports:

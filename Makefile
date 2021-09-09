@@ -1,1 +1,1 @@
-docker build -f ./Dockerfile -t dilemma:v1 .
+docker build -f ./Dockerfile -t dilemma:v2 .

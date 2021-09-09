@@ -3,11 +3,11 @@ package logic
 import (
 	"context"
 	"dilemma/internal/model"
-	"dilemma/youget"
-
 	"dilemma/internal/svc"
 	"dilemma/internal/types"
-
+	"dilemma/tool"
+	"dilemma/youget"
+	"fmt"
 	"github.com/tal-tech/go-zero/core/logx"
 )
 
@@ -72,15 +72,27 @@ func (l *VideoLogic) VideoDownload(req types.VideoDownloadReq) error {
 }
 
 func (l *VideoLogic) YouGetDownload(task *model.Task, info *model.TaskInfo) error {
-	l.Logger.Info("开始下载", task, info)
+	l.Logger.Info("开始下载", tool.Json(task), tool.Json(info))
 
 	y := youget.NewYouGet()
-	res, err := y.Download(task.Url, info.Format, "/workspace")
+	outputDir := fmt.Sprintf("/workspace/%d", info.Id)
+	res, err := y.Download(task.Url, info.Format, outputDir)
 	if err != nil {
-		l.Logger.Error("下载失败", res, err)
+		l.Logger.Error("youget", "下载失败", res, err)
 		return err
 	}
 
-	l.Logger.Info("下载成功", res)
+	video := model.Video{
+		TaskInfoId: info.Id,
+		Path:       outputDir,
+	}
+
+	_, err = l.videoDB.Insert(&video)
+	if err != nil {
+		l.Logger.Error("插入下载数据失败", err)
+		return err
+	}
+
+	l.Logger.Info("下载成功")
 	return nil
 }

@@ -5,7 +5,7 @@ import (
 )
 
 func TestYouGet_Info(t *testing.T) {
-	y := NewYouGet()
+	y := NewYouGet(nil)
 	url := "https://www.bilibili.com/video/BV1iy4y1G7b8"
 
 	res, err := y.Info(url)
@@ -16,7 +16,7 @@ func TestYouGet_Info(t *testing.T) {
 }
 
 func TestYouGet_Download(t *testing.T) {
-	y := NewYouGet()
+	y := NewYouGet(nil)
 	url := "https://www.bilibili.com/video/BV1iy4y1G7b8"
 
 	res, err := y.Download(url, "dash-flv360", "./video")

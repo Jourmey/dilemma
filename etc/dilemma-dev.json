@@ -1,0 +1,17 @@
+{
+  "Name": "dilemma",
+  "Host": "0.0.0.0",
+  "Port": 8081,
+  "Mysql": {
+    "Host": "localhost",
+    "Port": 3306,
+    "DbName": "dilemma",
+    "User": "root",
+    "Password": "123456"
+  },
+  "Staticfile": {
+    "Host": "0.0.0.0",
+    "Port": 9090,
+    "Root": "/Users/zhengjm/volumes/workspace"
+  }
+}

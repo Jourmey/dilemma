@@ -5,6 +5,7 @@ import (
 	"dilemma/internal/model"
 	"dilemma/internal/svc"
 	"dilemma/internal/types"
+	"dilemma/tool"
 	"dilemma/youget"
 	"github.com/tal-tech/go-zero/core/logx"
 )
@@ -69,23 +70,29 @@ func (l *TaskLogic) Create(req types.TaskCreatReq) error {
 
 // 获取任务信息
 func (l *TaskLogic) YouGetInfo(task model.Task) error {
-	y := youget.NewYouGet()
+	l.Logger.Info("获取任务信息", tool.Start, "参数:", task.Url)
+
+	// 更新信息
+	err := l.taskDB.UpdateStatus(task.Id, model.StatusRunning, "", "")
+	if err != nil {
+		return err
+	}
+
+	y := youget.NewYouGet(l.ctx)
 	yInfo, err := y.Info(task.Url)
 	if err != nil {
 		// 更新信息
-		err = l.taskDB.UpdateStatus(task.Id, 2, "", "")
+		err = l.taskDB.UpdateStatus(task.Id, model.StatusFailed, "", "")
 		if err != nil {
-			l.Logger.Error("更新任务数据失败", err)
 			return err
 		}
-		l.Logger.Error("创建任务失败", err)
+		l.Logger.Error(tool.Failed, err)
 		return err
 	}
 
 	// 更新信息
-	err = l.taskDB.UpdateStatus(task.Id, 1, yInfo.Title, yInfo.Site)
+	err = l.taskDB.UpdateStatus(task.Id, model.StatusSuccess, yInfo.Title, yInfo.Site)
 	if err != nil {
-		l.Logger.Error("更新任务数据失败", err)
 		return err
 	}
 
@@ -100,10 +107,10 @@ func (l *TaskLogic) YouGetInfo(task model.Task) error {
 		}
 		_, err = l.taskInfoDB.Insert(&taskInfo)
 		if err != nil {
-			l.Logger.Info("更新任务信息数据失败", err)
 			continue
 		}
 	}
 
+	l.Logger.Info(tool.Success)
 	return nil
 }

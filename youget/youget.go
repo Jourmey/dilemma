@@ -1,13 +1,19 @@
 package youget
 
 import (
+	"context"
+	"dilemma/tool"
 	"encoding/json"
+	"github.com/tal-tech/go-zero/core/logx"
+	"github.com/tal-tech/go-zero/core/trace"
 	"os/exec"
 )
 
 var BinPath string
 
 type YouGet struct {
+	logx.Logger
+	ctx context.Context
 	bin string
 }
 
@@ -27,8 +33,12 @@ type (
 	}
 )
 
-func NewYouGet() *YouGet {
+func NewYouGet(ctx context.Context) *YouGet {
 	y := new(YouGet)
+	ctx, _ = trace.StartClientSpan(ctx, "dilemma", "youget")
+	y.ctx = ctx
+	y.Logger = logx.WithContext(y.ctx)
+
 	if BinPath != "" {
 		y.bin = BinPath
 	} else {
@@ -55,13 +65,19 @@ func (f *YouGet) Download(url string, format string, outputDir string) (string, 
 }
 
 func (f *YouGet) cmd(arg ...string) ([]byte, error) {
+	f.Logger.Info(tool.Start, f.bin, arg)
 	cmd := exec.Command(f.bin, arg...)
-	return cmd.Output()
+	b, err := cmd.Output()
+	if err != nil {
+		f.Logger.Error(tool.Failed)
+	} else {
+		f.Logger.Info(tool.Success)
+	}
+	return b, err
 }
 
 func (f *YouGet) cmd2(v interface{}, arg ...string) error {
-	cmd := exec.Command(f.bin, arg...)
-	data, err := cmd.Output()
+	data, err := f.cmd(arg...)
 	if err != nil {
 		return err
 	}

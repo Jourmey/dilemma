@@ -33,5 +33,5 @@ type TaskCreatReq struct {
 }
 
 type VideoDownloadReq struct {
-	TaskInfoId int `json:"task_info_id"`
+	TaskInfoIds []int `json:"task_info_id"`
 }

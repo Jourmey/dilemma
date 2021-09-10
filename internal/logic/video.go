@@ -64,18 +64,13 @@ func (l *VideoLogic) buildVideo(res []*model.Video) []*model.Video {
 }
 
 func (l *VideoLogic) VideoDownload(req types.VideoDownloadReq) error {
-	info, err := l.taskInfoDB.FindOne(req.TaskInfoId)
-	if err != nil {
-		return err
-	}
-
-	task, err := l.taskDB.FindOne(info.TaskId)
+	info, err := l.taskInfoDB.FindDetailsById(req.TaskInfoIds)
 	if err != nil {
 		return err
 	}
 
 	go func() {
-		err = l.youGetDownload(task, info)
+		err = l.youGetDownload(info, l.svcCtx.Config.Staticfile.Root)
 		if err != nil {
 			l.Logger.Error("下载失败", err)
 		}
@@ -84,32 +79,46 @@ func (l *VideoLogic) VideoDownload(req types.VideoDownloadReq) error {
 	return err
 }
 
-func (l *VideoLogic) youGetDownload(task *model.Task, info *model.TaskInfo) error {
-	l.Logger.Info("开始下载", tool.Json(task), tool.Json(info))
+func (l *VideoLogic) youGetDownload(info map[int]*model.TaskAndInfo, root string) error {
+	l.Logger.Info("下载视频", tool.Start)
 
-	y := youget.NewYouGet()
-	site := "unknown"
-	if task.Site != "" {
-		site = task.Site
-	}
-	outputDir := fmt.Sprintf("%s/%d/%d", site, info.Id/100, info.Id%100)
-	res, err := y.Download(task.Url, info.Format, fmt.Sprintf("/workspace/%s", outputDir))
-	if err != nil {
-		l.Logger.Error("youget", "下载失败", res, err)
-		return err
+	y := youget.NewYouGet(l.ctx)
+	// 任务维度
+	for _, t := range info {
+		site := "unknown"
+		if t.Task.Site != "" {
+			site = t.Task.Site
+		}
+
+		// 信息维度
+		for _, i := range t.Info {
+			err := l.taskInfoDB.UpdateStatus(i.Id, model.StatusRunning)
+			if err != nil {
+				return err
+			}
+
+			outputDir := fmt.Sprintf("%s/%d", site, i.Id)
+			_, err = y.Download(t.Task.Url, i.Format, fmt.Sprintf("%s/%s", root, outputDir))
+
+			status := model.StatusFailed
+			if err == nil { // 成功
+				_, err = l.videoDB.Insert(&model.Video{
+					TaskInfoId: i.Id,
+					Path:       outputDir,
+				})
+				if err != nil {
+					return err
+				}
+				status = model.StatusSuccess
+			}
+
+			err = l.taskInfoDB.UpdateStatus(i.Id, status)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
-	video := model.Video{
-		TaskInfoId: info.Id,
-		Path:       outputDir,
-	}
-
-	_, err = l.videoDB.Insert(&video)
-	if err != nil {
-		l.Logger.Error("插入下载数据失败", err)
-		return err
-	}
-
-	l.Logger.Info("下载成功")
+	l.Logger.Info(tool.Success)
 	return nil
 }

@@ -2,14 +2,21 @@
 package handler
 
 import (
-	"dilemma/internal/svc"
-	"github.com/tal-tech/go-zero/rest"
 	"net/http"
+
+	"dilemma/internal/svc"
+
+	"github.com/tal-tech/go-zero/rest"
 )
 
 func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 	engine.AddRoutes(
 		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/hello",
+				Handler: helloHandler(serverCtx),
+			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/task",
@@ -38,3 +45,4 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 	)
 }
+

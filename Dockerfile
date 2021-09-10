@@ -1,4 +1,4 @@
-FROM youget:5
+FROM youget:v1.0
 
 COPY . /app/dilemma/
 # 设置工作目录

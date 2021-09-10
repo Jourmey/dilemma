@@ -8,5 +8,10 @@
     "DbName": "dilemma",
     "User": "root",
     "Password": "123456"
+  },
+  "Staticfile": {
+    "Host": "0.0.0.0",
+    "Port": 9090,
+    "Root": "/workspace"
   }
 }

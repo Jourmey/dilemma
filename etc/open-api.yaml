@@ -1,9 +1,0 @@
-Name: open-api
-Host: 0.0.0.0
-Port: 8081
-Mysql:
-  Host: localhost
-  Port: 3306
-  DbName: dilemma
-  User: root
-  Password: 123456

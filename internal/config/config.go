@@ -7,7 +7,8 @@ import (
 type (
 	Config struct {
 		rest.RestConf
-		Mysql Mysql
+		Mysql      Mysql
+		Staticfile Staticfile
 	}
 	Mysql struct {
 		Host     string
@@ -15,5 +16,10 @@ type (
 		DbName   string
 		User     string
 		Password string
+	}
+	Staticfile struct {
+		Host string
+		Port int
+		Root string
 	}
 )

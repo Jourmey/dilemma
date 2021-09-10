@@ -39,7 +39,7 @@ func (l *VideoLogic) Video(req types.GetReq) ([]*model.Video, error) {
 		if err != nil {
 			return nil, err
 		} else {
-			return []*model.Video{t}, nil
+			return l.buildVideo([]*model.Video{t}), nil
 		}
 	}
 
@@ -47,7 +47,20 @@ func (l *VideoLogic) Video(req types.GetReq) ([]*model.Video, error) {
 	if req.PageSize <= 0 {
 		req.PageSize = 20
 	}
-	return l.videoDB.Finds(req.PageSize, req.PageNo)
+	res, err := l.videoDB.Finds(req.PageSize, req.PageNo)
+	if err != nil {
+		return nil, err
+	}
+
+	return l.buildVideo(res), err
+
+}
+
+func (l *VideoLogic) buildVideo(res []*model.Video) []*model.Video {
+	for i := 0; i < len(res); i++ {
+		res[i].Path = fmt.Sprintf(fmt.Sprintf("%s:%d/%s", l.svcCtx.Config.Staticfile.Host, l.svcCtx.Config.Staticfile.Port, res[i].Path))
+	}
+	return res
 }
 
 func (l *VideoLogic) VideoDownload(req types.VideoDownloadReq) error {
@@ -62,7 +75,7 @@ func (l *VideoLogic) VideoDownload(req types.VideoDownloadReq) error {
 	}
 
 	go func() {
-		err = l.YouGetDownload(task, info)
+		err = l.youGetDownload(task, info)
 		if err != nil {
 			l.Logger.Error("下载失败", err)
 		}
@@ -71,12 +84,16 @@ func (l *VideoLogic) VideoDownload(req types.VideoDownloadReq) error {
 	return err
 }
 
-func (l *VideoLogic) YouGetDownload(task *model.Task, info *model.TaskInfo) error {
+func (l *VideoLogic) youGetDownload(task *model.Task, info *model.TaskInfo) error {
 	l.Logger.Info("开始下载", tool.Json(task), tool.Json(info))
 
 	y := youget.NewYouGet()
-	outputDir := fmt.Sprintf("/workspace/%d", info.Id)
-	res, err := y.Download(task.Url, info.Format, outputDir)
+	site := "unknown"
+	if task.Site != "" {
+		site = task.Site
+	}
+	outputDir := fmt.Sprintf("%s/%d/%d", site, info.Id/100, info.Id%100)
+	res, err := y.Download(task.Url, info.Format, fmt.Sprintf("/workspace/%s", outputDir))
 	if err != nil {
 		l.Logger.Error("youget", "下载失败", res, err)
 		return err

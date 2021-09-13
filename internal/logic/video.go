@@ -105,6 +105,7 @@ func (l *VideoLogic) youGetDownload(info map[int]*model.TaskAndInfo, root string
 				_, err = l.videoDB.Insert(&model.Video{
 					TaskInfoId: i.Id,
 					Path:       outputDir,
+					Title:      t.Task.Title,
 				})
 				if err != nil {
 					return err

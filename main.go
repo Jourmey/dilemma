@@ -25,6 +25,7 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	server := rest.MustNewServer(c.RestConf)
+	//server.Use(rest.ToMiddleware(TracingHandler))
 	handler.RegisterHandlers(server, ctx)
 
 	g.Add(staticFile)

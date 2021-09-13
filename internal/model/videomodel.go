@@ -22,6 +22,7 @@ type (
 		Id         int       `db:"id"`           // id
 		TaskInfoId int       `db:"task_info_id"` // 关联任务信息
 		Path       string    `db:"path"`         // 路径
+		Title      string    `db:"title"`        // 标题
 		CreateTime time.Time `db:"create_time"`  // 创建时间
 		UpdateTime time.Time `db:"update_time"`  // 修改时间
 	}

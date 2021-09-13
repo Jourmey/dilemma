@@ -43,6 +43,7 @@ create table `video`
     `id`           int(14) NOT NULL AUTO_INCREMENT COMMENT '主键',
     `task_info_id` int(11) NOT NULL DEFAULT '0' COMMENT '关联任务信息',
     `path`         varchar(255) NOT NULL DEFAULT '' COMMENT '路径',
+    `title`        varchar(255) NOT NULL DEFAULT '' COMMENT '标题',
     `create_time`  timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time`  timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (`id`)

@@ -1,1 +1,1 @@
-docker build -f ./Dockerfile -t dilemma:v1.0 .
+docker build -f ./Dockerfile -t 15735181677/dilemma:v1.1 .

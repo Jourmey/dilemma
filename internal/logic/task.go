@@ -40,17 +40,15 @@ func (l *TaskLogic) Task(req types.GetReq) ([]*model.Task, error) {
 		}
 	}
 	// 分页查询
-	if req.PageSize <= 0 {
-		req.PageSize = 20
-	}
 	return l.taskDB.Finds(req.PageSize, req.PageNo)
 }
 
 // 插入任务
 func (l *TaskLogic) Create(req types.TaskCreatReq) error {
+	t := model.TagList(req.Tag)
 	data := model.Task{
 		Url: req.Url,
-		Tag: req.Tag,
+		Tag: &t,
 	}
 	id, err := l.taskDB.Insert(&data)
 	if err != nil {

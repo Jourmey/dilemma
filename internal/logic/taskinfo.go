@@ -26,7 +26,7 @@ func NewTaskinfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) TaskinfoL
 	}
 }
 
-func (l *TaskinfoLogic) Taskinfo(req types.GetReq) ([]*model.TaskInfo, error) {
+func (l *TaskinfoLogic) Taskinfo(req types.TaskInfoGetReq) ([]*model.TaskInfo, error) {
 	// 按照id查询
 	if req.Id != 0 {
 		t, err := l.taskInfoDB.FindOne(req.Id)
@@ -37,9 +37,10 @@ func (l *TaskinfoLogic) Taskinfo(req types.GetReq) ([]*model.TaskInfo, error) {
 		}
 	}
 
-	// 分页查询
-	if req.PageSize <= 0 {
-		req.PageSize = 20
+	if req.TaskId != 0 {
+		return l.taskInfoDB.FindsByTaskID(req.TaskId)
 	}
+
+	// 分页查询
 	return l.taskInfoDB.Finds(req.PageSize, req.PageNo)
 }

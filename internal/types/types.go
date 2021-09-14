@@ -27,9 +27,14 @@ type GetReq struct {
 	PageSize int `form:"page_size,optional"`
 }
 
+type TaskInfoGetReq struct {
+	TaskId int `form:"task_id,optional"`
+	GetReq
+}
+
 type TaskCreatReq struct {
 	Url string `json:"url"`
-	Tag int    `json:"tag"`
+	Tag []int  `json:"tag"`
 }
 
 type VideoDownloadReq struct {

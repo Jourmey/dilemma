@@ -12,32 +12,31 @@ type (
 		Delete(id int) error
 		FindByIds(id []int) ([]*TaskInfo, error)
 		Finds(limit, offset int) ([]*TaskInfo, error)
+		FindsByTaskID(taskId int) ([]*TaskInfo, error)
 		FindDetailsById(ids []int) (map[int]*TaskAndInfo, error)
 		UpdateStatus(id int, Status int) error
 	}
 
 	defaultTaskInfoModel struct {
-		db    *gorm.DB
-		table string
+		db *gorm.DB
 	}
 
 	TaskInfo struct {
-		Id         int       `db:"id"`          // id
-		TaskId     int       `db:"task_id"`     // 关联任务
-		Format     string    `db:"format"`      // 链接:dash-flv360
-		Container  string    `db:"container"`   // 类型:mp4
-		Quality    string    `db:"quality"`     // 质量:流畅 360P
-		Size       int       `db:"size"`        // 任务大小
-		Status     int       `db:"status"`      // 任务状态 0未处理 1处理中 2获取信息 3获取失败
-		CreateTime time.Time `db:"create_time"` // 创建时间
-		UpdateTime time.Time `db:"update_time"` // 修改时间
+		Id         int       `gorm:"id" json:"id"`                   // id
+		TaskId     int       `gorm:"task_id" json:"task_id"`         // 关联任务
+		Format     string    `gorm:"format" json:"format"`           // 链接:dash-flv360
+		Container  string    `gorm:"container" json:"container"`     // 类型:mp4
+		Quality    string    `gorm:"quality" json:"quality"`         // 质量:流畅 360P
+		Size       int       `gorm:"size" json:"size"`               // 任务大小
+		Status     int       `gorm:"status" json:"status"`           // 任务状态 0未处理 1处理中 2获取信息 3获取失败
+		CreateTime time.Time `gorm:"create_time" json:"create_time"` // 创建时间
+		UpdateTime time.Time `gorm:"update_time" json:"update_time"` // 修改时间
 	}
 )
 
 func NewTaskInfoModel(db *gorm.DB) TaskInfoModel {
 	return &defaultTaskInfoModel{
-		db:    db,
-		table: "`task_info`",
+		db: db,
 	}
 }
 
@@ -73,6 +72,10 @@ func (d *defaultTaskInfoModel) Delete(id int) error {
 }
 
 func (d *defaultTaskInfoModel) Finds(limit, offset int) ([]*TaskInfo, error) {
+	if limit <= 0 {
+		limit = 20
+	}
+
 	return d.finds(func(db *gorm.DB) *gorm.DB {
 		return db.Limit(limit).Offset(offset)
 	})
@@ -81,6 +84,12 @@ func (d *defaultTaskInfoModel) Finds(limit, offset int) ([]*TaskInfo, error) {
 func (d *defaultTaskInfoModel) FindByIds(ids []int) ([]*TaskInfo, error) {
 	return d.finds(func(db *gorm.DB) *gorm.DB {
 		return db.Where("id in (?)", ids)
+	})
+}
+
+func (d *defaultTaskInfoModel) FindsByTaskID(taskId int) ([]*TaskInfo, error) {
+	return d.finds(func(db *gorm.DB) *gorm.DB {
+		return db.Where("task_id = ?", taskId)
 	})
 }
 

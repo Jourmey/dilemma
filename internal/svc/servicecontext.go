@@ -15,5 +15,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 		DB:     model.MustGetMysqlDB(c.Mysql),
+		//DB:     model.MustGetMysqlDB(c.Mysql).Debug(),
 	}
 }

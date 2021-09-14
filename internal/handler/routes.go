@@ -42,7 +42,11 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/video/download",
 				Handler: videoDownloadHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/tag",
+				Handler: tagHandler(serverCtx),
+			},
 		},
 	)
 }
-

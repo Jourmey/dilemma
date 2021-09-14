@@ -3,7 +3,7 @@ CREATE TABLE `task`
     `id`          int(14) NOT NULL AUTO_INCREMENT COMMENT '主键',
     `url`         varchar(255) NOT NULL DEFAULT '' COMMENT '链接',
     `signatures`  varchar(32)  NOT NULL DEFAULT '' COMMENT '特征码',
-    `tag`         tinyint(8) NOT NULL DEFAULT '0' COMMENT '标签',
+    `tag`         varchar(32)  NOT NULL DEFAULT '' COMMENT '标签',
     `status`      tinyint(2) NOT NULL DEFAULT '0' COMMENT '任务状态 0未处理 1处理中 2获取信息 3获取失败',
     `title`       varchar(255) NOT NULL DEFAULT '' COMMENT '标题',
     `site`        varchar(32)  NOT NULL DEFAULT '' COMMENT '平台',
@@ -52,3 +52,20 @@ create table `video`
 
 ALTER TABLE `video`
     ADD INDEX video_task_info_id_index (`task_info_id`);
+
+create table `tag`
+(
+    `id`          int(14) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `tag`         varchar(32) NOT NULL DEFAULT '' COMMENT 'tag',
+    `create_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='标签表';
+
+INSERT INTO dilemma.tag (tag, create_time, update_time)
+VALUES ('游戏', DEFAULT, DEFAULT),
+       ('动漫', DEFAULT, DEFAULT),
+       ('美食', DEFAULT, DEFAULT),
+       ('鬼畜', DEFAULT, DEFAULT),
+       ('音乐', DEFAULT, DEFAULT);

@@ -53,7 +53,6 @@ func (l *VideoLogic) Video(req types.GetReq) ([]*model.Video, error) {
 	}
 
 	return l.buildVideo(res), err
-
 }
 
 func (l *VideoLogic) buildVideo(res []*model.Video) []*model.Video {

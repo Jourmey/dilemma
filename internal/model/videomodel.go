@@ -14,26 +14,25 @@ type (
 	}
 
 	defaultVideoModel struct {
-		db    *gorm.DB
-		table string
+		db *gorm.DB
 	}
 
 	Video struct {
-		Id         int       `db:"id"`           // id
-		TaskInfoId int       `db:"task_info_id"` // 关联任务信息
-		Path       string    `db:"path"`         // 路径
-		Title      string    `db:"title"`        // 标题
-		CreateTime time.Time `db:"create_time"`  // 创建时间
-		UpdateTime time.Time `db:"update_time"`  // 修改时间
+		Id         int       `gorm:"id" json:"id"`                     // id
+		TaskInfoId int       `gorm:"task_info_id" json:"task_info_id"` // 关联任务信息
+		Path       string    `gorm:"path" json:"path"`                 // 路径
+		Title      string    `gorm:"title" json:"title"`               // 标题
+		CreateTime time.Time `gorm:"create_time" json:"create_time"`   // 创建时间
+		UpdateTime time.Time `gorm:"update_time" json:"update_time"`   // 修改时间
 	}
 )
 
 func NewVideoModel(db *gorm.DB) VideoModel {
 	return &defaultVideoModel{
-		db:    db,
-		table: "`video`",
+		db: db,
 	}
 }
+
 func (*Video) TableName() string {
 	return "video"
 }
@@ -62,10 +61,13 @@ func (m *defaultVideoModel) FindOne(id int) (*Video, error) {
 }
 
 func (m *defaultVideoModel) Delete(id int) error {
-	return m.db.Where("id = ?", id).Delete(&TaskInfo{}).Error
+	return m.db.Where("id = ?", id).Delete(&Tag{}).Error
 }
 
 func (m *defaultVideoModel) Finds(limit, offset int) ([]*Video, error) {
+	if limit <= 0 {
+		limit = 20
+	}
 	return m.finds(func(db *gorm.DB) *gorm.DB {
 		return m.db.Limit(limit).Offset(offset)
 	})

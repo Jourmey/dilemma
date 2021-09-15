@@ -47,7 +47,7 @@ func (l *VideoLogic) Video(req types.GetReq) ([]*model.Video, error) {
 	if req.PageSize <= 0 {
 		req.PageSize = 20
 	}
-	res, err := l.videoDB.Finds(req.PageSize, req.PageNo)
+	res, err := l.videoDB.Finds(req.PageSize, req.PageNo*req.PageSize)
 	if err != nil {
 		return nil, err
 	}

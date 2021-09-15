@@ -69,3 +69,8 @@ VALUES ('游戏', DEFAULT, DEFAULT),
        ('美食', DEFAULT, DEFAULT),
        ('鬼畜', DEFAULT, DEFAULT),
        ('音乐', DEFAULT, DEFAULT);
+
+
+# 允许所有ip连接
+CREATE USER 'dilemma'@'%' identified by 'aNXLSsZHc2bhbBmb';
+GRANT ALL ON *.* TO 'dilemma'@'%';

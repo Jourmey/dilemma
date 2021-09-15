@@ -4,6 +4,7 @@ import (
 	"dilemma/internal/config"
 	"dilemma/internal/handler"
 	"dilemma/internal/svc"
+	"dilemma/tool"
 	"flag"
 	"fmt"
 	"github.com/tal-tech/go-zero/core/conf"
@@ -25,7 +26,7 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	server := rest.MustNewServer(c.RestConf)
-	//server.Use(rest.ToMiddleware(TracingHandler))
+	server.Use(tool.CORSMiddleware)
 	handler.RegisterHandlers(server, ctx)
 
 	g.Add(staticFile)

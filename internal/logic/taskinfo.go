@@ -42,5 +42,5 @@ func (l *TaskinfoLogic) Taskinfo(req types.TaskInfoGetReq) ([]*model.TaskInfo, e
 	}
 
 	// 分页查询
-	return l.taskInfoDB.Finds(req.PageSize, req.PageNo)
+	return l.taskInfoDB.Finds(req.PageSize, req.PageNo*req.PageSize)
 }

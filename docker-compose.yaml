@@ -6,8 +6,8 @@ services:
     image: "mysql:latest"
     environment:
       MYSQL_ROOT_PASSWORD: "123456"
-      MYSQL_USER: 'test'
-      MYSQL_PASS: '123456'
+      MYSQL_USER: 'dilemma'
+      MYSQL_PASS: 'aNXLSsZHc2bhbBmb'
     restart: always
     volumes:
       - "/Users/zhengjm/volumes/db:/var/lib/mysql"

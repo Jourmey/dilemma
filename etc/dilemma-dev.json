@@ -6,8 +6,8 @@
     "Host": "jourmey.top",
     "Port": 3306,
     "DbName": "dilemma",
-    "User": "root",
-    "Password": "123456"
+    "User": "dilemma",
+    "Password": "aNXLSsZHc2bhbBmb"
   },
   "Staticfile": {
     "Host": "0.0.0.0",

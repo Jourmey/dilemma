@@ -40,7 +40,7 @@ func (l *TaskLogic) Task(req types.GetReq) ([]*model.Task, error) {
 		}
 	}
 	// 分页查询
-	return l.taskDB.Finds(req.PageSize, req.PageNo)
+	return l.taskDB.Finds(req.PageSize, req.PageNo*req.PageSize)
 }
 
 // 插入任务

@@ -1,8 +1,6 @@
 package tool
 
-import (
-	"net/http"
-)
+import "net/http"
 
 // cors
 func CORSMiddleware(next http.HandlerFunc) http.HandlerFunc {

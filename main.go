@@ -25,7 +25,7 @@ func main() {
 	staticFile := NewStaticFile(c.Staticfile)
 
 	ctx := svc.NewServiceContext(c)
-	server := rest.MustNewServer(c.RestConf)
+	server := rest.MustNewServer(c.RestConf, rest.WithNotAllowedHandler(rest.CorsHandler()))
 	server.Use(tool.CORSMiddleware)
 	handler.RegisterHandlers(server, ctx)
 

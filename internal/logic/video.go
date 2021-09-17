@@ -122,3 +122,12 @@ func (l *VideoLogic) youGetDownload(info map[int]*model.TaskAndInfo, root string
 	l.Logger.Info(tool.Success)
 	return nil
 }
+
+func (l *VideoLogic) HomepageInfo() (*types.HomepageInfo, error) {
+	h := new(types.HomepageInfo)
+	h.UserNumber = 0
+	h.TaskNumber, _ = l.taskDB.Count()
+	h.TaskInfoNumber, _ = l.taskInfoDB.Count()
+	h.VideoNumber, _ = l.videoDB.Count()
+	return h, nil
+}

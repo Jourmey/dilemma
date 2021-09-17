@@ -11,6 +11,7 @@ type (
 		FindOne(id int) (*Video, error)
 		Delete(id int) error
 		Finds(limit, offset int) ([]*Video, error)
+		Count() (int, error)
 	}
 
 	defaultVideoModel struct {
@@ -71,4 +72,10 @@ func (m *defaultVideoModel) Finds(limit, offset int) ([]*Video, error) {
 	return m.finds(func(db *gorm.DB) *gorm.DB {
 		return m.db.Limit(limit).Offset(offset)
 	})
+}
+
+func (m *defaultVideoModel) Count() (int, error) {
+	var count int64
+	err := m.db.Model(Video{}).Count(&count).Error
+	return int(count), err
 }

@@ -70,7 +70,33 @@ VALUES ('游戏', DEFAULT, DEFAULT),
        ('鬼畜', DEFAULT, DEFAULT),
        ('音乐', DEFAULT, DEFAULT);
 
+-- create table `user`
+-- (
+--     `id`          int(14) NOT NULL AUTO_INCREMENT COMMENT '主键',
+--     `username`    varchar(32) NOT NULL DEFAULT '' COMMENT '登录名',
+--     `password`    varchar(32) NOT NULL DEFAULT '' COMMENT '密码',
+--     `nickname`    varchar(32) NOT NULL DEFAULT '' COMMENT '昵称',
+--     `create_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+--     `update_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+--     PRIMARY KEY (`id`)
+-- ) ENGINE = InnoDB
+--   DEFAULT CHARSET = utf8 COMMENT ='用户表';
+--
+-- create table `login`
+-- (
+--     `id`          int(14) NOT NULL AUTO_INCREMENT COMMENT '主键',
+--     `user_id`     varchar(32) NOT NULL DEFAULT '' COMMENT 'tag',
+--     `hostname`    varchar(32) NOT NULL DEFAULT '' COMMENT 'hostname',
+--     `ip`          varchar(32) NOT NULL DEFAULT '' COMMENT 'ip',
+--     `create_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+--     `update_time` timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+--     PRIMARY KEY (`id`)
+-- ) ENGINE = InnoDB
+--   DEFAULT CHARSET = utf8 COMMENT ='登录表';
 
-# 允许所有ip连接
-CREATE USER 'dilemma'@'%' identified by 'aNXLSsZHc2bhbBmb';
-GRANT ALL ON *.* TO 'dilemma'@'%';
+
+-- # 允许所有ip连接
+CREATE
+USER 'dilemma'@'%' identified by 'aNXLSsZHc2bhbBmb';
+GRANT ALL
+ON *.* TO 'dilemma'@'%';

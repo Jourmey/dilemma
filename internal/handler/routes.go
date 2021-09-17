@@ -44,6 +44,11 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/homepage",
+				Handler: homepageInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/tag",
 				Handler: tagHandler(serverCtx),
 			},

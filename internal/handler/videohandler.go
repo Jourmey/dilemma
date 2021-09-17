@@ -37,3 +37,11 @@ func videoDownloadHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 		httpx.OkJson(w, types.NewResultMsg(nil, err))
 	}
 }
+
+func homepageInfoHandler(ctx *svc.ServiceContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		l := logic.NewVideoLogic(r.Context(), ctx)
+		resp, err := l.HomepageInfo()
+		httpx.OkJson(w, types.NewResultMsg(resp, err))
+	}
+}

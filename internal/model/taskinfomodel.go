@@ -15,6 +15,7 @@ type (
 		FindsByTaskID(taskId int) ([]*TaskInfo, error)
 		FindDetailsById(ids []int) (map[int]*TaskAndInfo, error)
 		UpdateStatus(id int, Status int) error
+		Count() (int, error)
 	}
 
 	defaultTaskInfoModel struct {
@@ -139,4 +140,10 @@ func (d *defaultTaskInfoModel) UpdateStatus(id int, Status int) error {
 	return d.db.Model(&TaskInfo{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"status": Status,
 	}).Error
+}
+
+func (d *defaultTaskInfoModel) Count() (int, error) {
+	var count int64
+	err := d.db.Model(TaskInfo{}).Count(&count).Error
+	return int(count), err
 }

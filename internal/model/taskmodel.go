@@ -15,6 +15,7 @@ type (
 		Finds(limit, offset int) ([]*Task, error)
 		UpdateStatus(id int, Status int, Title, Site string) error
 		FindByIds(ids []int) ([]*Task, error)
+		Count() (int, error)
 	}
 
 	defaultTaskModel struct {
@@ -110,4 +111,10 @@ func (m *defaultTaskModel) FindByIds(ids []int) ([]*Task, error) {
 	return m.finds(func(db *gorm.DB) *gorm.DB {
 		return db.Where("id in (?)", ids)
 	})
+}
+
+func (m *defaultTaskModel) Count() (int, error) {
+	var count int64
+	err := m.db.Model(Task{}).Count(&count).Error
+	return int(count), err
 }

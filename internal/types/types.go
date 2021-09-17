@@ -40,3 +40,10 @@ type TaskCreatReq struct {
 type VideoDownloadReq struct {
 	TaskInfoIds []int `json:"task_info_id"`
 }
+
+type HomepageInfo struct {
+	UserNumber     int `json:"user_number"`
+	TaskNumber     int `json:"task_number"`
+	TaskInfoNumber int `json:"task_info_number"`
+	VideoNumber    int `json:"video_number"`
+}

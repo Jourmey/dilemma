@@ -49,9 +49,11 @@ func NewStaticFile(config config.Staticfile) *staticFile {
 }
 
 func (s staticFile) Start() {
-	m := http.NewServeMux()
-	m.Handle("/", http.FileServer(http.Dir(s.config.Root)))
-	_ = http.ListenAndServe(fmt.Sprintf("%s:%d", s.config.Host, s.config.Port), m)
+	if s.config.Port != 0 {
+		m := http.NewServeMux()
+		m.Handle("/", tool.CORSMiddleware(http.FileServer(http.Dir(s.config.Root)).ServeHTTP))
+		_ = http.ListenAndServe(fmt.Sprintf("%s:%d", s.config.Host, s.config.Port), m)
+	}
 }
 
 func (s staticFile) Stop() {}

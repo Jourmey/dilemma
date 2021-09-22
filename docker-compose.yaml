@@ -1,5 +1,8 @@
 version: '2.0'
 
+#dilemma= /Users/zhengjm/volumes/dilemma
+#dilemma= /app/dilemma
+
 services:
   mysql:
     container_name: mysql
@@ -10,9 +13,9 @@ services:
       MYSQL_PASS: 'aNXLSsZHc2bhbBmb'
     restart: always
     volumes:
-      - "/Users/zhengjm/volumes/db:/var/lib/mysql"
-      - "/Users/zhengjm/volumes/conf/my.cnf:/etc/my.cnf"
-      - "/Users/zhengjm/volumes/init:/docker-entrypoint-initdb.d/"
+      - "/app/dilemma/mysql/db:/var/lib/mysql"
+      - "/app/dilemma/mysql/conf/my.cnf:/etc/my.cnf"
+      - "/app/dilemma/mysql/init:/docker-entrypoint-initdb.d/"
     ports:
       - "3306:3306"
     networks:
@@ -21,16 +24,25 @@ services:
     container_name: dilemma
     image: "15735181677/dilemma:v1.1"
     volumes:
-      - "/Users/zhengjm/volumes/workspace:/workspace"
+      - "/app/dilemma/workspace:/workspace"
     ports:
-      - "9090:9090"
       - "8081:8081"
+      - "9090:9090"
     depends_on:
       - mysql
     links:
       - mysql
     networks:
       - mynet
+  dilemma-web:
+    container_name: dilemma-web
+    image: "nginx:latest"
+    volumes:
+      - "/app/dilemma/dilemma-web/dist:/app/dilemma-web/"
+      - "/app/dilemma/dilemma-web/nginx.conf:/etc/nginx/nginx.conf"
+    ports:
+      - "80:80"
+
 
 networks:
   mynet:

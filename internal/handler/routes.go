@@ -38,6 +38,11 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: videoHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodDelete,
+				Path:    "/video",
+				Handler: deleteVideoHandler(serverCtx), // 清理视频
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/video/download",
 				Handler: videoDownloadHandler(serverCtx),

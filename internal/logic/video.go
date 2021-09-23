@@ -9,6 +9,7 @@ import (
 	"dilemma/youget"
 	"fmt"
 	"github.com/tal-tech/go-zero/core/logx"
+	"os"
 )
 
 type VideoLogic struct {
@@ -75,6 +76,29 @@ func (l *VideoLogic) VideoDownload(req types.VideoDownloadReq) error {
 		}
 	}()
 
+	return err
+}
+
+func (l *VideoLogic) DeleteVideo(id types.ID) error {
+	l.Logger.Error("清理视频数据", tool.Start)
+
+	v, err := l.videoDB.FindOne(id.Id)
+	if err != nil {
+		return err
+	}
+
+	err = l.videoDB.Delete(v.Id)
+	if err != nil {
+		return err
+	}
+
+	path := fmt.Sprintf("%s/%s", l.svcCtx.Config.Staticfile.Root, v.Path)
+	err = os.RemoveAll(path)
+	if err != nil {
+		l.Logger.Error(tool.Failed, path)
+	} else {
+		l.Logger.Info(tool.Success, path)
+	}
 	return err
 }
 

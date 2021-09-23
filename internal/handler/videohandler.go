@@ -38,6 +38,23 @@ func videoDownloadHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 	}
 }
 
+
+// 清理视频
+func deleteVideoHandler(ctx *svc.ServiceContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.ID
+		if err := httpx.Parse(r, &req); err != nil {
+			httpx.Error(w, err)
+			return
+		}
+
+		l := logic.NewVideoLogic(r.Context(), ctx)
+		err := l.DeleteVideo(req)
+		httpx.OkJson(w, types.NewResultMsg(nil, err))
+	}
+}
+
+
 func homepageInfoHandler(ctx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		l := logic.NewVideoLogic(r.Context(), ctx)

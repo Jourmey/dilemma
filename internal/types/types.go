@@ -21,6 +21,10 @@ func NewResultMsg(result interface{}, err error) *ResultMsg {
 	return r
 }
 
+type ID struct {
+	Id int `form:"id"`
+}
+
 type GetReq struct {
 	Id       int `form:"id,optional"`
 	PageNo   int `form:"page_no,optional"`

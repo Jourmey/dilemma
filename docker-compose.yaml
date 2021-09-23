@@ -22,12 +22,14 @@ services:
       - mynet
   dilemma:
     container_name: dilemma
-    image: "15735181677/dilemma:v1.1"
+    image: "15735181677/youget:v1.0"
     volumes:
-      - "/app/dilemma/workspace:/workspace"
+      - "/app/dilemma/dilemma:/app/dilemma/dilemma"
+      - "/app/dilemma/workspace:/app/dilemma/workspace"
     ports:
       - "8081:8081"
       - "9090:9090"
+    entrypoint: [ "/app/dilemma/dilemma/dilemma","-f=/app/dilemma/dilemma/etc/dilemma.json" ]
     depends_on:
       - mysql
     links:

@@ -12,6 +12,6 @@
   "Staticfile": {
     "Host": "0.0.0.0",
     "Port": 9090,
-    "Root": "/workspace"
+    "Root": "/app/dilemma/workspace"
   }
 }

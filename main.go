@@ -32,10 +32,12 @@ func main() {
 	g.Add(staticFile)
 	g.Add(server)
 
+	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
+
 	defer g.Stop()
 	g.Start()
 
-	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
+	fmt.Printf("Exiting server at %s:%d...\n", c.Host, c.Port)
 }
 
 type staticFile struct {
